@@ -1,111 +1,85 @@
--- employees라는 데이터베이스 선택
-use employees;
-
-select emp_no, first_name from employees;
-select * from employees; -- 성능상 안 쓰는게 좋음
-
-select emp_no, birth_date from employees;
-select hire_date from employees;
-select emp_no, from_date, to_date from dept_manager;
-select * from departments;
-
-insert into employees
-values (1,
-		'2000-01-01',
-		'soohyun',
-		'kim',
-		'M',
-		now()); -- 현재 날짜
-
-INSERT INTO departments
-VALUES ('d010','korea IT Ddepartment');
-SELECT * FROM departments;
-
-INSERT INTO employees
-VALUES (2,'2002-01-01','soohyun','lim','F',now());
-SELECT * FROM employees;
-
-INSERT INTO  dept_emp
-VALUES (1,'d010',now(),'9999-01-01');
-SELECT * FROM dept_emp;
-
-UPDATE employees
-SET FIRST_name = '길동'
-WHERE emp_no = 10001;
-
-SELECT * FROM employees;
-
-UPDATE employees
-SET last_name='홍',
-hire_date = now()
-WHERE emp_no = 10001;
-
-SELECT * FROM employees;
-
-UPDATE departments
-SET dept_name = 'Tech Sales'
-WHERE dept_no = 'd007';
-
-SELECT * FROM departments;
-
-UPDATE employees
-SET birth_date = '1977-07-07'
-WHERE last_name = 'Erie';
-
-SELECT * FROM employees
-WHERE last_name = 'Erie';
-
-DELETE FROM employees
-WHERE emp_no = 10005;
-
-SELECT * FROM employees;
-
-DELETE FROM employees
-WHERE hire_date = '1993-05-12';
-
-SELECT * FROM employees;
-
-DELETE FROM employees
-WHERE emp_no =  28847;
-
-SELECT * FROM employees
-WHERE emp_no = 28847;
-
-
-
-
-
-
-
-CREATE TABLE test_member(
-	member_id varchar(50) COMMENT '아이디',
-	member_pwd varchar(255) COMMENT '비밀번호',
-	member_name varchar(50) COMMENT '이름',
-	member_age TINYINT COMMENT '나이',
-	member_in_date datetime COMMENT '가입일'
+CREATE TABLE member_notnull(
+	id varchar(50) NOT NULL,
+	pwd varchar(250) NOT NULL,
+	name varchar(50),
+	age int,
+	in_date datetime
 );
 
-DROP TABLE test_member;
+INSERT INTO member_notnull 
+values('test', 'quest234', null, null, now());
 
+INSERT INTO member_notnull (id, pwd, in_date)
+values('test3', 'quest2354', now());
 
-CREATE TABLE free_board(
-	board_no int COMMENT '게시판 번호',
-	board_title varchar(100) COMMENT '게시판 제목',
-	board_content text COMMENT '게시판 내용',
-	board_date datetime COMMENT '게시판 작성일',
-	board_views int COMMENT '게시판 조회수'
+SELECT * FROM member_notnull;
+
+######################################################################
+CREATE TABLE member_unique(
+	id varchar(50) NOT NULL UNIQUE,
+	pwd varchar(250) NOT null
 );
 
-INSERT INTO free_board
-value ('1', '국어', '국어숙제',now(), 5);
+INSERT INTO member_unique VALUES('test', 'quest124!');
+INSERT INTO member_unique VALUES('test', 'quest124!');
 
-INSERT INTO free_board
-value ('2', '수학', '수학숙제',now(), 6);
+########################################################################
+CREATE TABLE member_check(
+	gender varchar(1) CHECK(gender IN('W','M'))
+);
 
-INSERT INTO free_board
-value ('3', '영어', '영어숙제',now(),7);
+INSERT INTO member_check value('W');
+INSERT INTO member_check value('m');
+INSERT INTO member_check value('fgrnj');
+SELECT * FROM member_check;
 
-SELECT * FROM free_board;
+#########################################################################
+CREATE TABLE member_default(
+	id varchar(50),
+	in_date datetime DEFAULT now()
+);
 
+INSERT INTO member_default(id) values('test');
+INSERT INTO member_default(id) values('test3');
+SELECT * FROM member_default;
+########################################################################
+CREATE TABLE member_pk(
+	member_pk_id int PRIMARY KEY auto_increment,
+	id varchar(50)
+);
 
+DROP TABLE member_pk;
 
+INSERT INTO member_pk value(1,'test');
+INSERT INTO member_pk value(6,'test');
+INSERT INTO member_pk value(null,'test');
+
+SELECT * FROM member_pk;
+
+##########################################################################
+CREATE TABLE member_primary(
+	member_primary_id int PRIMARY KEY AUTO_INCREMENT,
+	id varchar(50)
+);
+
+CREATE TABLE board_foreign(
+	board_foreign_id int PRIMARY KEY AUTO_INCREMENT,
+	title varchar(300),
+	writer_id int,
+	CONSTRAINT fk_wriker FOREIGN KEY (writer_id) REFERENCES member_primary(member_primary_id)
+	ON DELETE CASCADE --  SET null
+);
+
+INSERT INTO member_primary(id)
+values('test1'),
+	  ('test2'),
+	  ('test3');
+DROP TABLE board_foreign;
+
+INSERT INTO board_foreign(title, writer_id) VALUES('게시글 제목!', 2);
+
+SELECT * FROM member_primary;
+SELECT * FROM board_foreign;
+
+DELETE FROM member_primary
+WHERE member_primary_id = 1;
