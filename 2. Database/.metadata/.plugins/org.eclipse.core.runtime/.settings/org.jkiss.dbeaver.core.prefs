@@ -4,4 +4,4 @@ driver.selector.orderBy=score
 eclipse.preferences.version=1
 sql.format.keywordCase=UPPER
 tipOfTheDayInitializer.notFirstRun=true
-ui.auto.update.check.time=1769387482086
+ui.auto.update.check.time=1769473920285
